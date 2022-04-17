@@ -9,6 +9,7 @@ from .investing_parser import InvestingComParser
 from .denotations import importances, flags
 from .investing_news_parser import InvestingNewsParser
 from .crypto_news_parser import CryptoNewsParser
+from .gazeta_news_parser import GazetaNewsParser
 
 
 loop = asyncio.get_event_loop()
@@ -81,10 +82,27 @@ async def crypto_send_news():
             await parser.update_lastkey(newkey)
 
 
+async def gazeta_send_news():
+    parser = GazetaNewsParser()
+    news = parser.get_news()
+    if(news):
+        news.reverse()
+        text = ''
+        for post in news:
+            title = post['title']
+            url = post['more']
+            text = f'<b>{title}</b>\n\n<a href="{url}">Ko\'proq</a>'
+            newkey = post['key']
+            await bot.send_message('@ufinancenews', text, parse_mode='html')
+            await parser.update_lastkey(newkey)
+
+
+
 async def scheduler():
     aioschedule.every().day.at("00:00").do(send_today_events)
     aioschedule.every(15).minutes.do(investing_send_news)
     aioschedule.every(4).hours.do(crypto_send_news)
+    aioschedule.every(2).hours.do(gazeta_send_news)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(10)
@@ -94,4 +112,4 @@ async def on_startup(_):
     await asyncio.create_task(scheduler())
 
 
-executor.start_polling(dp, skip_updates=True, on_startup=crypto_send_news)
+executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
