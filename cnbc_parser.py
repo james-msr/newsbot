@@ -32,13 +32,15 @@ class CnbcParser():
         title_block = post.find('div', class_='RiverHeadline-headline')
         title = title_block.find_all('a')[-1]
         link = title['href']
-        author_block = post.find('div', class_='RiverByline-bylineContainer')
-        author = author_block.find('a')
         return {
             'title': translator.translate(title.text, dest='uz').text,
             'link': link,
-            'author': author.text
         }
+
+    # cannot get picture
+    def get_post_details(self, link):
+        r = requests.get(link, headers=self.headers)
+        soup = BeautifulSoup(r.content, 'lxml')
 
     def get_news(self):
         news_details = []

@@ -1,23 +1,26 @@
 from aiogram import executor
+import aioschedule
 import asyncio
 
 from datetime import datetime
 
 from .config import *
 from .investing_parser import InvestingComParser
-from .cnbc_parser import CnbcParser
 from .denotations import importances, flags
+from .investing_news_parser import InvestingNewsParser
+from .crypto_news_parser import CryptoNewsParser
 
 
 loop = asyncio.get_event_loop()
 
 async def reminder(event):
+    time = event['time']
     currency = event['currency']
     country = event['country']
     importance = importances[event['importance']]
     name = event['event_name']
     previous = event['previous']
-    text = f'<b>15min</b> {flags[country]} {currency} {importance} {name} {previous}\n\n'
+    text = f'<b>{time}</b> {flags[country]} {currency} {importance} {name} {previous}\n\n'
     await bot.send_message('@ufinancenews', text, parse_mode='html')
 
 
@@ -49,13 +52,46 @@ async def send_today_events():
     await bot.send_message('@ufinancenews', text, parse_mode='html')
 
 
-async def send_news(_):
-    parser = CnbcParser()
+async def investing_send_news():
+    parser = InvestingNewsParser()
     news = parser.get_news()
-    for post in news:
-        title = post['title']
-        link = post['link']
-        text = f'{title}\n<a href="{link}">Ko\'rish</a>'
-        await bot.send_message('@ufinancenews', text, parse_mode='html')
+    if(news):
+        news.reverse()
+        text = ''
+        for post in news:
+            title = post['title']
+            content = post['content']
+            text = f'<b>{title}</b>'
+            newkey = post['key']
+            await bot.send_photo('@ufinancenews', post['photo_url'], text, parse_mode='html')
+            await parser.update_lastkey(newkey)
 
-executor.start_polling(dp, skip_updates=True, on_startup=send_news)
+
+async def crypto_send_news():
+    parser = CryptoNewsParser()
+    news = parser.get_news()
+    if(news):
+        news.reverse()
+        text = ''
+        for post in news:
+            title = post['title']
+            text = f'<b>{title}</b>'
+            newkey = post['key']
+            await bot.send_photo('@ufinancenews', post['photo_url'], text, parse_mode='html')
+            await parser.update_lastkey(newkey)
+
+
+async def scheduler():
+    aioschedule.every().day.at("00:00").do(send_today_events)
+    aioschedule.every(15).minutes.do(investing_send_news)
+    aioschedule.every(4).hours.do(crypto_send_news)
+    while True:
+        await aioschedule.run_pending()
+        await asyncio.sleep(10)
+
+
+async def on_startup(_):
+    await asyncio.create_task(scheduler())
+
+
+executor.start_polling(dp, skip_updates=True, on_startup=crypto_send_news)
