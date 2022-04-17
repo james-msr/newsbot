@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from .translator import translator
+from ..translator import translator
 
 class CryptoNewsParser():
     headers = {

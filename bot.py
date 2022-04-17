@@ -5,12 +5,12 @@ import asyncio
 from datetime import datetime
 
 from .config import *
-from .investing_parser import InvestingComParser
+from .parsers.investing_parser import InvestingComParser
 from .denotations import importances, flags
-from .investing_news_parser import InvestingNewsParser
-from .crypto_news_parser import CryptoNewsParser
-from .gazeta_news_parser import GazetaNewsParser
-from .kunuz_news_parser import KunuzNewsParser
+from .parsers.investing_news_parser import InvestingNewsParser
+from .parsers.crypto_news_parser import CryptoNewsParser
+from .parsers.gazeta_news_parser import GazetaNewsParser
+from .parsers.kunuz_news_parser import KunuzNewsParser
 
 
 loop = asyncio.get_event_loop()

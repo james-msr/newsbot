@@ -1,8 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
-from .translator import translator
 
-class InvestingNewsParser():
+from ..translator import translator
+
+
+class InvestingComParser():
+
     headers = {
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'accept-language': 'en-US,en;q=0.9,ru;q=0.8',
@@ -20,68 +23,40 @@ class InvestingNewsParser():
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.82 Safari/537.36'
     }
 
-    r = requests.get('https://www.investing.com/news/latest-news', headers=headers)
+    r = requests.get('https://www.investing.com/economic-calendar/', headers=headers)
     soup = BeautifulSoup(r.content, 'lxml')
-    news_block = None
-    news = []
-    lastkey = ''
-    
+    date = None
+    events = []
 
     def __init__(self):
-        self.news_block = self.soup.find('div', class_='largeTitle')
-        self.news = self.news_block.find_all('article', class_='js-article-item')
 
-        try:
-            with open('D:/Projects/newsbot/keys/investing_lastkey.txt', 'r') as f:
-                self.lastkey = f.read()
-        except:
-            pass
+        self.date = self.soup.find('td', class_='theDay')
+        self.events = self.soup.find_all('tr', class_='js-event-item')
 
-    def get_post_by_html(self, post):
-        title = post.find('div', class_='textDiv').find('a')
-        key = post['data-id']
-        try:
-            details = self.get_post_details(title['href'])
-            return {
-            'title': translator.translate(title.text, dest='uz').text,
-            'key': key,
-            'photo_url': details['photo_url'],
-            'content': translator.translate(details['content'], dest='uz').text
-            }
-        except:
-            return {
-                'error': 'Error'
-            }
-
-    def get_post_details(self, url):
-        r = requests.get('https://www.investing.com/'+url, headers=self.headers)
-        soup = BeautifulSoup(r.content, 'lxml')
-
-        article = soup.find('div', class_='articlePage')
-        img = article.find('img', id='carouselImage')
-
+    def get_event_details_by_html(self, event):
+        event_id = event['id']
+        time = event.find('td', class_='js-time')
+        currency = event.find('td', class_='flagCur')
+        country = currency.find('span')['title']
+        importance = event.find('td', class_='sentiment')['title']
+        event_name = event.find('td', class_='event')
+        actual = event.find('td', class_='act')
+        forecast = event.find('td', class_='fore')
+        previous = event.find('td', class_='prev')
         return {
-            'photo_url': img['src'],
-            'content': article.text
+            'event_id': event_id, 
+            'time': time.text, 
+            'currency': currency.text[2:], 
+            'country': country, 
+            'importance': importance,
+            'event_name': translator.translate(event_name.text, dest='uz').text,
+            'actual': actual.text,
+            'forecast': forecast.text,
+            'previous': previous.text
         }
 
-    def get_news(self):
-        news_details = []
-        for post in self.news:
-            try:
-                if post['data-id'] != self.lastkey:
-                    details = self.get_post_by_html(post)
-                    if 'error' in details:
-                        continue
-                    else:
-                        news_details.append(details)
-                else:
-                    break
-            except:
-                continue
-        return news_details
-
-    async def update_lastkey(self, newkey):
-        with open('D:/Projects/newsbot/keys/investing_lastkey.txt', 'w+') as f:
-            f.write(newkey)
-        self.lastkey = newkey
+    def events_details(self):
+        events_details = []
+        for event in self.events:
+            events_details.append(self.get_event_details_by_html(event))
+        return events_details
