@@ -10,6 +10,7 @@ from .denotations import importances, flags
 from .investing_news_parser import InvestingNewsParser
 from .crypto_news_parser import CryptoNewsParser
 from .gazeta_news_parser import GazetaNewsParser
+from .kunuz_news_parser import KunuzNewsParser
 
 
 loop = asyncio.get_event_loop()
@@ -66,6 +67,7 @@ async def investing_send_news():
             newkey = post['key']
             await bot.send_photo('@ufinancenews', post['photo_url'], text, parse_mode='html')
             await parser.update_lastkey(newkey)
+            await asyncio.sleep(10)
 
 
 async def crypto_send_news():
@@ -80,6 +82,7 @@ async def crypto_send_news():
             newkey = post['key']
             await bot.send_photo('@ufinancenews', post['photo_url'], text, parse_mode='html')
             await parser.update_lastkey(newkey)
+            await asyncio.sleep(10)
 
 
 async def gazeta_send_news():
@@ -95,7 +98,23 @@ async def gazeta_send_news():
             newkey = post['key']
             await bot.send_message('@ufinancenews', text, parse_mode='html')
             await parser.update_lastkey(newkey)
+            await asyncio.sleep(10)
 
+
+async def kunuz_send_news(_):
+    parser = KunuzNewsParser()
+    news = parser.get_news()
+    if(news):
+        news.reverse()
+        text = ''
+        for post in news:
+            title = post['title']
+            url = post['more']
+            text = f'<b>{title}</b>\n\n<a href="{url}">Ko\'proq</a>'
+            newkey = post['key']
+            await bot.send_message('@ufinancenews', text, parse_mode='html')
+            await parser.update_lastkey(newkey)
+            await asyncio.sleep(10)
 
 
 async def scheduler():
@@ -103,6 +122,7 @@ async def scheduler():
     aioschedule.every(15).minutes.do(investing_send_news)
     aioschedule.every(4).hours.do(crypto_send_news)
     aioschedule.every(2).hours.do(gazeta_send_news)
+    aioschedule.every(1).hours.do(kunuz_send_news)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(10)
