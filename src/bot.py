@@ -13,7 +13,6 @@ from .parsers.gazeta_news_parser import GazetaNewsParser
 from .parsers.kunuz_news_parser import KunuzNewsParser
 
 
-loop = asyncio.get_event_loop()
 
 async def reminder(event):
     time = event['time']
@@ -31,6 +30,7 @@ def my_func(event):
 
 
 async def event_reminder(time, event):
+    loop = asyncio.get_event_loop()
     now = datetime.now()
     remind_time = datetime.strptime(f'{now.date()} {time}:00', '%Y-%m-%d %H:%M:%S')
     diff = remind_time - now
