@@ -101,7 +101,7 @@ async def gazeta_send_news():
             await asyncio.sleep(10)
 
 
-async def kunuz_send_news(_):
+async def kunuz_send_news():
     parser = KunuzNewsParser()
     news = parser.get_news()
     if(news):
