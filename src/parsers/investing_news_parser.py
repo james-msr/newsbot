@@ -33,7 +33,7 @@ class InvestingNewsParser():
         self.news = self.news_block.find_all('article', class_='js-article-item')
 
         try:
-            with open(os.path.abspath('src/keys/investing_lastkey.txt'), 'r') as f:
+            with open('src/keys/investing_lastkey.txt', 'r') as f:
                 self.lastkey = f.read()
         except:
             pass
@@ -83,6 +83,6 @@ class InvestingNewsParser():
         return news_details
 
     async def update_lastkey(self, newkey):
-        with open(os.path.abspath('src/keys/investing_lastkey.txt'), 'w+') as f:
+        with open('src/keys/investing_lastkey.txt', 'w+') as f:
             f.write(newkey)
         self.lastkey = newkey

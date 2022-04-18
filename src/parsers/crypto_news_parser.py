@@ -20,7 +20,7 @@ class CryptoNewsParser():
         self.news = self.news_block.find_all('article', class_='mb-30')
 
         try:
-            with open(os.path.abspath('src/keys/crypto_lastkey.txt'), 'r') as f:
+            with open('src/keys/crypto_lastkey.txt', 'r') as f:
                 self.lastkey = f.read()
         except:
             pass
@@ -49,6 +49,6 @@ class CryptoNewsParser():
         return news_details
 
     async def update_lastkey(self, newkey):
-        with open(os.path.abspath('src/keys/crypto_lastkey.txt'), 'w+') as f:
+        with open('src/keys/crypto_lastkey.txt', 'w+') as f:
             f.write(newkey)
         self.lastkey = newkey

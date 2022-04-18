@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import requests
-import os
 
 
 class KunuzNewsParser():
@@ -30,7 +29,7 @@ class KunuzNewsParser():
         self.news = self.news_block.find_all('a', class_='daily-block')
 
         try:
-            with open(os.path.abspath('src/keys/kunuz_lastkey.txt'), 'r') as f:
+            with open('src/keys/kunuz_lastkey.txt', 'r') as f:
                 self.lastkey = f.read()
         except:
             pass
@@ -55,6 +54,6 @@ class KunuzNewsParser():
         return news_details
 
     async def update_lastkey(self, newkey):
-        with open(os.path.abspath('src/keys/kunuz_lastkey.txt'), 'w+') as f:
+        with open('src/keys/kunuz_lastkey.txt', 'w+') as f:
             f.write(newkey)
         self.lastkey = newkey
