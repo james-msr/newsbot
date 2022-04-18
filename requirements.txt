@@ -4,8 +4,9 @@ aioschedule==0.5.2
 asgiref==3.5.0
 async-timeout==3.0.1
 beautifulsoup4==4.9.3
-lxml==4.6.3
 bs4==0.0.1
+googletrans==3.1.0a0
+lxml==4.6.3
 requests==2.25.1
 selenium==3.141.0
 simplejson==3.6.5
