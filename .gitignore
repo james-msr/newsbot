@@ -1,4 +1,7 @@
 /__pycache__/
 /src/__pycache__/
 /src/parsers/__pycache__/
-/src/keys/
+/src/keys/investing_lastkey.txt
+/src/keys/gazeta_lastkey.txt
+/src/keys/kunuz_lastkey.txt
+/src/keys/crypto_lastkey.txt
