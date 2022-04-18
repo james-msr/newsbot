@@ -10,6 +10,5 @@ lxml==4.6.3
 requests==2.25.1
 selenium==3.141.0
 simplejson==3.6.5
-translate==3.6.1
 urllib3==1.26.5
 user-agents==2.2.0
