@@ -1,0 +1,12 @@
+aiogram==2.13
+aiohttp==3.7.4.post0
+aioschedule==0.5.2
+asgiref==3.3.4
+async-timeout==3.0.1
+beautifulsoup4==4.9.3
+lxml==4.6.3
+requests==2.25.1
+selenium==3.141.0
+simplejson==3.6.5
+urllib3==1.26.5
+user-agents==2.2.0
