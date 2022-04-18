@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import os
 
 
 class GazetaNewsParser():
@@ -29,7 +30,7 @@ class GazetaNewsParser():
         self.news = self.news_block.find_all('div', class_='nblock')
 
         try:
-            with open('D:/Projects/newsbot/keys/gazeta_lastkey.txt', 'r') as f:
+            with open(os.path.abspath('src/keys/gazeta_lastkey.txt'), 'r') as f:
                 self.lastkey = f.read()
         except:
             pass
@@ -54,6 +55,6 @@ class GazetaNewsParser():
         return news_details
 
     async def update_lastkey(self, newkey):
-        with open('D:/Projects/newsbot/keys/gazeta_lastkey.txt', 'w+') as f:
+        with open(os.path.abspath('src/keys/gazeta_lastkey.txt'), 'w+') as f:
             f.write(newkey)
         self.lastkey = newkey
