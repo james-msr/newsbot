@@ -17,6 +17,6 @@ flags = {
     'Canada': '🇨🇦',
     'Russia': '🇷🇺',
     'South Korea': '🇰🇷',
-    'New Zenland': '🇳🇿',
+    'New Zealand': '🇳🇿',
     'Hong Kong': '🇭🇰'
 }
