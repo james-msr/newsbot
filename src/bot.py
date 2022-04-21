@@ -118,11 +118,11 @@ async def kunuz_send_news():
 
 
 async def scheduler():
-    aioschedule.every().day.at("00:30").do(send_today_events)
+    aioschedule.every().day.at("20:30").do(send_today_events)
     aioschedule.every(15).minutes.do(investing_send_news)
-    aioschedule.every(4).hours.do(crypto_send_news)
-    aioschedule.every(2).hours.do(gazeta_send_news)
-    aioschedule.every(1).hours.do(kunuz_send_news)
+    aioschedule.every(15).minutes.do(crypto_send_news)
+    aioschedule.every(15).minutes.do(gazeta_send_news)
+    aioschedule.every(15).minutes.do(kunuz_send_news)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(10)
