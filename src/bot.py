@@ -67,7 +67,7 @@ async def investing_send_news():
             newkey = post['key']
             await bot.send_photo('@ufinancenews', post['photo_url'], text, parse_mode='html')
             await parser.update_lastkey(newkey)
-            await asyncio.sleep(10)
+            await asyncio.sleep(30)
 
 
 async def crypto_send_news():
@@ -82,7 +82,7 @@ async def crypto_send_news():
             newkey = post['key']
             await bot.send_photo('@ufinancenews', post['photo_url'], text, parse_mode='html')
             await parser.update_lastkey(newkey)
-            await asyncio.sleep(10)
+            await asyncio.sleep(30)
 
 
 async def gazeta_send_news():
@@ -98,7 +98,7 @@ async def gazeta_send_news():
             newkey = post['key']
             await bot.send_message('@ufinancenews', text, parse_mode='html')
             await parser.update_lastkey(newkey)
-            await asyncio.sleep(10)
+            await asyncio.sleep(30)
 
 
 async def kunuz_send_news():
@@ -114,15 +114,19 @@ async def kunuz_send_news():
             newkey = post['key']
             await bot.send_message('@ufinancenews', text, parse_mode='html')
             await parser.update_lastkey(newkey)
-            await asyncio.sleep(10)
+            await asyncio.sleep(30)
+
+
+async def send_news():
+    await investing_send_news()
+    await crypto_send_news()
+    await gazeta_send_news()
+    await kunuz_send_news()
 
 
 async def scheduler():
     aioschedule.every().day.at("20:30").do(send_today_events)
-    aioschedule.every(15).minutes.do(investing_send_news)
-    aioschedule.every(15).minutes.do(crypto_send_news)
-    aioschedule.every(15).minutes.do(gazeta_send_news)
-    aioschedule.every(15).minutes.do(kunuz_send_news)
+    aioschedule.every(15).minutes.do(send_news)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(10)
