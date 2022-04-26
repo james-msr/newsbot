@@ -2,7 +2,7 @@ from aiogram import executor
 import aioschedule
 import asyncio
 
-from datetime import datetime
+import datetime
 
 from .config import *
 from .parsers.investing_parser import InvestingComParser
@@ -31,8 +31,8 @@ def my_func(event):
 
 async def event_reminder(time, event):
     loop = asyncio.get_event_loop()
-    now = datetime.now()
-    remind_time = datetime.strptime(f'{now.date()} {time}:00', '%Y-%m-%d %H:%M:%S')
+    now = datetime.datetime.now()
+    remind_time = datetime.datetime.strptime(f'{now.date()} {time}:00', '%Y-%m-%d %H:%M:%S')
     diff = remind_time - now
     delay = diff.seconds - 900
     loop.call_later(delay, my_func, event)
@@ -125,11 +125,11 @@ async def send_news():
 
 
 async def scheduler():
-    aioschedule.every().day.at("20:30").do(send_today_events)
+    aioschedule.every().day.at(datetime.time(hour=00, tzinfo=datetime.timezone('Asia/Tashkent')))
     aioschedule.every(15).minutes.do(send_news)
     while True:
         await aioschedule.run_pending()
-        await asyncio.sleep(10)
+        await asyncio.sleep(30)
 
 
 async def on_startup(_):
